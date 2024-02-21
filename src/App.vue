@@ -10,10 +10,6 @@
           <RouterLink id="link" to="/register"> REGISTER |</RouterLink>
           <RouterLink id="link" to="/credits"> CREDITS</RouterLink>
         </div>
-        <RouterLink to="/"> Home |</RouterLink>
-        <RouterLink to="/login"> Login |</RouterLink>
-        <RouterLink to="/register"> Register | </RouterLink>
-        <RouterLink to="/credits"> Credits </RouterLink>
       </nav>
     </div>
   </header>
@@ -23,31 +19,23 @@
 
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
-
-
 </script>
 
 <style>
-
-
-nav{
+nav {
   display: flex;
   justify-content: space-between;
   margin-left: 20px;
   margin-right: 20px;
 }
 
-
-#link{
+#link {
   text-decoration: none;
   color: rgb(179, 179, 179);
   font-family: 'Michroma', sans-serif;
-
 }
 
-#link:hover{
+#link:hover {
   color: white;
 }
-
-
 </style>
