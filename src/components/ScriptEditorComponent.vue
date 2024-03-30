@@ -261,8 +261,7 @@ div {
 #script-input {
   width: 100%;
   border: none;
-  /* border-left:#53b290; */
-  background: #0a111c;
+  background: #f0f9f0;
   font-family: Orbitron;
   color: #53b290;
   font-size: 15px;
