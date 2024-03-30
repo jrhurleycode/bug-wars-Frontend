@@ -7,8 +7,9 @@
     </div> -->
 
         <div class="game-species">
-          <div id="map">
-            <map-selector-component />
+          <div>
+            <h2 id="title">BATTLEGROUND: </h2>
+            <carousel-component id="carousel" :slides="slides"></carousel-component>
           </div>
 
           <div id="species-selector">
@@ -24,18 +25,46 @@
 </template>
 
 <script>
-import MapSelectorComponent from './MapSelectorComponent.vue'
 import SpeciesSelectorComponent from './SpeciesSelectorComponent.vue'
 import StartButtonComponent from './StartButtonComponent.vue'
+import CarouselComponent from './CarouselComponent.vue'
 export default {
-  components: { MapSelectorComponent, SpeciesSelectorComponent, StartButtonComponent }
+  components: {
+    SpeciesSelectorComponent,
+    StartButtonComponent,
+    CarouselComponent
+  },
+  data() {
+    return {
+      slides: [
+        'src/assets/maps/Screenshot 2024-03-29 183705.png',
+        'src/assets/maps/Screenshot 2024-03-29 183720.png',
+        'src/assets/maps/Screenshot 2024-03-29 183735.png',
+        'src/assets/maps/Screenshot 2024-03-29 183748.jpg',
+      ]
+    }
+  }
 }
 </script>
 
 <style scoped>
+
+.carousel{
+  border: solid silver 3px;
+}
+
+#title{
+  font-family: Orbitron;
+  color: #53b290;
+  font-weight: bold;
+
+}
+
 .lobby-wrapper {
   display: flex;
   justify-content: center;
+  margin-top: 50px;
+  
 }
 
 #start-button {
@@ -55,6 +84,8 @@ export default {
   padding-left: 50px;
   padding-bottom: 50px;
   border-radius: 30px;
+  box-shadow: 0 0 30px #53b290;
+
 }
 
 #species-selector {

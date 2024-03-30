@@ -7,6 +7,7 @@ import GameLobbyView from '@/views/GameLobbyView.vue'
 import CreditsView from '@/views/CreditsView.vue'
 import ScriptEditorView from '@/views/ScriptEditorView.vue'
 import HowToPlayView from '@/views/HowToPlayView.vue'
+import TestCarouselView from '@/views/CarouselView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -55,6 +56,11 @@ const router = createRouter({
       path: '/how-to-play',
       name: 'how-to-play',
       component: HowToPlayView
+    },
+    {
+      path: '/carousel',
+      name: 'carousel',
+      component: TestCarouselView
     }
   ]
 })
