@@ -1,7 +1,5 @@
 <template>
-  <div class="start-button">
-    <button>START</button>
-  </div>
+  <button>START</button>
 </template>
 
 <script>
@@ -10,7 +8,7 @@ export default {}
 
 <style scoped>
 button {
-  width: 200px;
+  width: 500px;
   height: 55px;
   border-radius: 10px;
   background: #e55300;
@@ -22,12 +20,10 @@ button {
   font-style: normal;
   border: none;
   cursor: pointer;
-  margin-top: 50px;
-  
 }
 
-button:hover{
-  background:goldenrod;
+button:hover {
+  background: goldenrod;
 }
 
 .v-enter-active,

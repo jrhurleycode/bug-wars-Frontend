@@ -1,8 +1,6 @@
 <template>
   <!-- Add logo -->
-  <div id="logo">
-    <img src="..\assets\bugwars-logo.png" alt="logo" />
-  </div>
+
   <div id="script-editor-window">
     <script-editor-component />
   </div>

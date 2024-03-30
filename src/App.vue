@@ -10,6 +10,7 @@
             SCRIPT EDITOR
           </RouterLink>
         </div>
+        
         <div class="right-links">
           <RouterLink v-if="!tokenExists" class="link" to="/register"> REGISTER </RouterLink>
           <RouterLink class="link" id="how-to-play" to="/how-to-play"> HOW TO PLAY </RouterLink>
@@ -46,7 +47,14 @@ export default {
 }
 </script>
 
-<style>
+<style >
+.wrapper{
+}
+
+#logo{
+  border-radius: 200px;
+}
+
 body {
   background: linear-gradient(#141e30, #243b55);
   height: 200vh;
