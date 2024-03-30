@@ -18,11 +18,19 @@
           </div>
 
           <div id="generate-button-div">
-            <button id="generate-button" @click="updateScript">Update</button>
+            <button id="generate-button" @click="updateScript">UPDATE</button>
           </div>
 
           <div id="save-button-div">
-            <button id="save-button" @click="createScript">Create Script</button>
+            <button
+              id="save-button"
+              :class="{ enabled: validatedScript, disabled: !validatedScript }"
+              :disabled="isSaveButtonDisabled()"
+              @click="saveScript"
+              v-tooltip.top="'Please press UPDATE before saving a new script.'"
+            >
+              SAVE
+            </button>
           </div>
 
           <div id="script-name-display">{{ script.name }}</div>
@@ -88,6 +96,9 @@ export default {
     })
   },
   methods: {
+    isSaveButtonDisabled() {
+      return !this.validatedScript
+    },
     confirmName() {
       this.script.name = this.scriptName
       console.log('Name: ' + this.script.name)
@@ -102,8 +113,9 @@ export default {
     updateScript() {
       this.confirmName()
       this.updateRawScript()
+      this.validatedScript = true
     },
-    createScript() {
+    saveScript() {
       scriptService
         .createScript(this.user, this.script)
         .then((response) => {
@@ -113,6 +125,7 @@ export default {
         .catch((error) => {
           this.handleError(error)
         })
+      this.validatedScript = false
     },
     handleSuccessResponse(response, script) {
       if (response.status === 409) {
@@ -141,12 +154,6 @@ export default {
         }
       }
       this.bytecode = errorMessage
-      this.$toast.add({
-        severity: 'error',
-        summary: 'Error creating script',
-        detail: errorMessage,
-        life: 3000
-      })
     }
   }
 }
@@ -261,6 +268,7 @@ div {
 #script-input {
   width: 100%;
   border: none;
+  border-radius: 5px;
   background: #f0f9f0;
   font-family: Orbitron;
   color: #53b290;
@@ -271,16 +279,6 @@ div {
   color: #53b290;
 }
 
-/* #script-input::before {
-  content: '';
-  position: absolute;
-  background-color: #53b290;
-  width: 50%;
-  height: 10px;
-  top: 0;
-  left: 0;
-} */
-
 #generate-button-div {
   grid-area: gen;
 }
@@ -288,7 +286,6 @@ div {
 #generate-button {
   background: #e55300;
   border: #e55300;
-
   font-family: Michroma;
   width: 130px;
   height: 30px;
@@ -302,11 +299,19 @@ div {
 
 #save-button {
   font-family: Michroma;
-  background: #9b9b9b;
-  border: #9b9b9b;
   width: 130px;
   height: 30px;
   margin-top: 5px;
+}
+
+.enabled {
+  background: #e55300;
+  border: #e55300;
+}
+
+.disabled {
+  background: #9b9b9b;
+  border: #9b9b9b;
 }
 
 #output-label {
