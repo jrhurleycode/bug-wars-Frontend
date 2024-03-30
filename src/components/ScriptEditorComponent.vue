@@ -27,7 +27,7 @@
               :class="{ enabled: validatedScript, disabled: !validatedScript }"
               :disabled="isSaveButtonDisabled()"
               @click="saveScript"
-              v-tooltip.top="'Please press UPDATE before saving a new script.'"
+              v-tooltip.top="tooltipText"
             >
               SAVE
             </button>
@@ -89,7 +89,7 @@ export default {
 
     this.editor = new EditorView({
       state: EditorState.create({
-        doc: '      ',
+        doc: '                                            ',
         extensions: [basicSetup, autocompletion({ override: [myCompletions] })]
       }),
       parent: this.$refs.editor
@@ -154,6 +154,11 @@ export default {
         }
       }
       this.bytecode = errorMessage
+    }
+  },
+  computed: {
+    tooltipText() {
+      return this.validatedScript ? '' : 'Please press UPDATE before saving a new script.'
     }
   }
 }
@@ -273,6 +278,9 @@ div {
   font-family: Orbitron;
   color: #53b290;
   font-size: 15px;
+  overflow-x: scroll;
+  max-height: 275px;
+  min-width: 100%;
 }
 
 #script-input::placeholder {
