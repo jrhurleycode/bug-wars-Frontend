@@ -26,7 +26,7 @@ export default {
       }
     })
   },
-  createScript(script, user) {
+  createScript(user, script) {
     return api.post(`/api/scripts`, script, {
       headers: {
         Authorization: `Bearer ${user.accessToken}`

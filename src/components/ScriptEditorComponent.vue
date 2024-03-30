@@ -13,28 +13,25 @@
             <input id="name-input-field" placeholder="script-name" v-model="scriptName" />
           </div>
 
-          <div id="confirm-button-div">
-            <button id="confirm-button" @click="confirmName">CONFIRM</button>
-          </div>
-
           <div id="script-input-box">
             <div ref="editor" id="script-input"></div>
           </div>
 
           <div id="generate-button-div">
-            <button id="generate-button" @click="updateRawScript">Create Script</button>
+            <button id="generate-button" @click="updateScript">Update</button>
           </div>
 
           <div id="save-button-div">
-            <button id="save-button">SAVE</button>
+            <button id="save-button" @click="createScript">Create Script</button>
           </div>
 
           <div id="script-name-display">{{ script.name }}</div>
 
           <div id="output-label">OUTPUT :</div>
 
-          <div id="output-box">{{ script.rawScript }}</div>
+          <div id="output-box">{{ bytecode }}</div>
         </div>
+        <Toast />
       </div>
     </div>
   </Transition>
@@ -45,25 +42,29 @@ import { EditorState } from '@codemirror/state'
 import { basicSetup, EditorView } from 'codemirror'
 import { autocompletion } from '@codemirror/autocomplete'
 import { useScriptStore } from '@/stores/ScriptStore'
+import scriptService from '@/services/ScriptService'
+import { useAuthStore } from '@/stores/auth'
+import Toast from 'primevue/toast'
 
 export default {
-  components: {},
+  components: { Toast },
   data() {
     return {
+      user: {},
       scriptName: '',
-      generatedScript: '',
-      content: '',
+      validatedScript: false,
+      bytecode: '',
       script: {
         name: '',
-        rawScript: '',
-        bytecode: '',
-        isValid: false
+        raw: ''
       },
       editor: null
     }
   },
   mounted() {
     const scriptStore = useScriptStore()
+    const authStore = useAuthStore()
+    this.user = authStore.user
 
     function myCompletions(context) {
       let before = context.matchBefore(/\w+/)
@@ -87,15 +88,65 @@ export default {
     })
   },
   methods: {
-    // TODO: Change Create Script button to call backend to create script. and if bytecode is invalid, display error
     confirmName() {
       this.script.name = this.scriptName
+      console.log('Name: ' + this.script.name)
     },
     updateRawScript() {
       // Get the document content
       const docContent = this.editor.state.doc.toString()
       // Update script.rawScript with the document content
-      this.script.rawScript = docContent
+      this.script.raw = docContent
+      console.log('Raw Script: ' + this.script.raw)
+    },
+    updateScript() {
+      this.confirmName()
+      this.updateRawScript()
+    },
+    createScript() {
+      scriptService
+        .createScript(this.user, this.script)
+        .then((response) => {
+          const script = response.data
+          this.handleSuccessResponse(response, script)
+        })
+        .catch((error) => {
+          this.handleError(error)
+        })
+    },
+    handleSuccessResponse(response, script) {
+      if (response.status === 409) {
+        this.bytecode =
+          'Script name exists already. Please choose a different name for your script.'
+      } else if (response.status === 201) {
+        this.bytecode = script.bytecode
+        this.$toast.add({
+          severity: 'success',
+          summary: 'Script created',
+          detail: 'Script created.',
+          life: 3000
+        })
+      } else {
+        this.handleError(response)
+      }
+    },
+    handleError(error) {
+      let errorMessage = 'Something happened on our side. Please try again'
+      if (error.response) {
+        if (error.response.status === 500) {
+          errorMessage = 'Error creating script. Please review your script and try again.'
+        } else if (error.response.status === 409) {
+          errorMessage =
+            'Script name exists already. Please choose a different name for your script.'
+        }
+      }
+      this.bytecode = errorMessage
+      this.$toast.add({
+        severity: 'error',
+        summary: 'Error creating script',
+        detail: errorMessage,
+        life: 3000
+      })
     }
   }
 }
