@@ -25,7 +25,7 @@
             <button
               id="save-button"
               :class="{ enabled: validatedScript, disabled: !validatedScript }"
-              :disabled="isSaveButtonDisabled()"
+              :disabled="isSaveButtonDisabled"
               @click="saveScript"
               v-tooltip.top="tooltipText"
             >
@@ -96,12 +96,17 @@ export default {
     })
   },
   methods: {
-    isSaveButtonDisabled() {
-      return !this.validatedScript
-    },
     confirmName() {
-      this.script.name = this.scriptName
-      console.log('Name: ' + this.script.name)
+      if (this.scriptName === '') {
+        this.$toast.add({
+          severity: 'error',
+          summary: 'No script name provided.',
+          detail: 'Please provide a name for your script.',
+          life: 3000
+        })
+      } else {
+        this.script.name = this.scriptName
+      }
     },
     updateRawScript() {
       // Get the document content
@@ -159,6 +164,9 @@ export default {
   computed: {
     tooltipText() {
       return this.validatedScript ? '' : 'Please press UPDATE before saving a new script.'
+    },
+    isSaveButtonDisabled() {
+      return !this.validatedScript
     }
   }
 }
@@ -245,6 +253,14 @@ div {
   grid-area: confirm;
   align-items: flex-end;
   justify-content: end;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:active {
+  transform: translateY(4px);
 }
 
 #confirm-button {
