@@ -48,8 +48,7 @@ export default {
 </script>
 
 <style >
-.wrapper{
-}
+
 
 #logo{
   border-radius: 200px;

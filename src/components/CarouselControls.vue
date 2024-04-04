@@ -1,6 +1,6 @@
 <template>
-  <button class="carousel-control left" @click="$emit('prev')">Prev</button
-  ><button class="carousel-control right" @click="$emit('next')">Next</button>
+  <button class="carousel-control left" @click="$emit('prev')">PREV</button
+  ><button class="carousel-control right" @click="$emit('next')">NEXT</button>
 </template>
 
 <script>
