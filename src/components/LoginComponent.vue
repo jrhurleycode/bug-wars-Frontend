@@ -1,8 +1,6 @@
 <template>
   <Transition appear>
     <div id="login-box" class="login-box">
-      <div><img id="logo" src="..\assets\bugwars-logo.png" alt="logo" /></div>
-
       <form id="login-form" @submit.prevent="login">
         <div id="fields">
           <div class="header-text">

@@ -1,28 +1,26 @@
 <template>
-  <div id="species-selector-container">
-    <!-- Species Selector Element -->
-    <div class="species-selector">
-      <!-- Title -->
+  <!-- Species Selector Element -->
+  <div class="species-selector">
+    <!-- Title -->
 
-      <!-- Button Container -->
+    <!-- Button Container -->
 
-      <div id="button-container">
-        <div id="header">
-          <h3>SPECIES SELECT</h3>
-        </div>
-
-        <div id="test-button">
-          <drop-down-component :items="scripts" />
-        </div>
-        <div id="test-button">
-          <drop-down-component :items="scripts" />
-        </div>
-        <div id="test-button">
-          <drop-down-component :items="scripts" />
-        </div>
-        <div id="test-button">
-          <drop-down-component :items="scripts" />
-        </div>
+    <div id="button-container">
+      <div id="drop-down">
+        <h3>SCRIPT: 1</h3>
+        <drop-down-component :items="scripts" />
+      </div>
+      <div id="drop-down">
+        <h3>SCRIPT: 2</h3>
+        <drop-down-component :items="scripts" />
+      </div>
+      <div id="drop-down">
+        <h3>SCRIPT: 3</h3>
+        <drop-down-component :items="scripts" />
+      </div>
+      <div id="drop-down">
+        <h3>SCRIPT: 4</h3>
+        <drop-down-component :items="scripts" />
       </div>
     </div>
   </div>
@@ -57,33 +55,23 @@ export default {
 </script>
 
 <style scoped>
-#test-button {
+#drop-down {
   display: flex;
+  flex-direction: column;
+  font-family: 'Michroma', sans-serif;
   justify-content: center;
-  height: 40px;
-}
-.species-selector {
-  border-radius: 20px;
-  border-style: solid;
-  /* border-color: #ffffff; */
-  border-width: 1px;
-  background: #0a111c;
-  margin-left: 12px;
-  width: 225px;
-  height: 285px;
-  position: relative;
-  box-shadow: 0 0 5px #53b290;
-
+  height: 60px;
+  
 }
 
 #button-container {
   height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 100px;
   justify-content: center;
-  align-content: center;
 }
+
 #header {
   display: flex;
   color: #53b290;
@@ -92,10 +80,12 @@ export default {
   justify-content: center;
   font-family: 'Michroma', sans-serif;
 }
+
 h3 {
   height: 30px;
   margin: 0;
 }
+
 .button-div {
   width: 100%;
   height: 31px;

@@ -8,7 +8,7 @@ import { defineStore } from 'pinia'
 export const useAuthStore = defineStore('auth', () => {
   const blankUser = {
     username: '',
-    accessToken: '',
+    accessToken: 'true',
     refreshToken: '',
     roles: []
   }

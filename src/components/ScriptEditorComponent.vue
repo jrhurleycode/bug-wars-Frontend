@@ -83,6 +83,7 @@ div {
   width: 100%;
 }
 #title-div {
+  margin-top: 40px;
   width: 64%;
   justify-content: flex-end;
   /* border: solid red 1px; */
@@ -107,12 +108,13 @@ div {
 }
 
 #script-editor-box {
+  margin-top: 50px;
   width: 450px;
   height: 650px;
   background: #0a111c;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   border-radius: 15px;
-  box-shadow: 0 0 8px #53b290;
+  box-shadow: 0 0 20px #53b290;
   display: grid;
   grid-template-columns: 0.5fr 3fr 8fr 0.5fr;
   grid-template-rows: 0.5fr 1fr 8fr 1fr 1fr 8fr 0.5fr;
