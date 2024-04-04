@@ -7,16 +7,6 @@
         <h1 id="title">SCRIPT EDITOR</h1>
       </div>
 
-      <!-- <div class="card flex justify-content-center">
-        <Dropdown
-          v-model="selectedScript"
-          :options="scriptList"
-          optionLabel="name"
-          placeholder="Select a Script"
-          class="w-full md:w-14rem"
-        />
-      </div> -->
-
       <!-- Adjust box to be display:grid and map out elements inside. -->
       <div id="script-editor-div">
         <div id="script-editor-box">
@@ -27,6 +17,7 @@
             <Dropdown
               id="name-input-field"
               v-model="selectedScript"
+              editable
               :options="scriptList"
               optionLabel="name"
               placeholder="Select a Script"
@@ -127,7 +118,7 @@ export default {
       })
     },
     confirmName() {
-      if (this.scriptName === '') {
+      if (this.script.name === '') {
         this.$toast.add({
           severity: 'error',
           summary: 'No script name provided.',
@@ -135,7 +126,7 @@ export default {
           life: 3000
         })
       } else {
-        this.script.name = this.scriptName
+        this.script.name = this.selectedScript.name
       }
     },
     updateRawScript() {
@@ -203,6 +194,7 @@ export default {
   watch: {
     selectedScript(newScript) {
       if (newScript) {
+        this.script.name = newScript.name
         // Update the CodeMirror editor with the raw script content
         this.editor.dispatch({
           changes: { from: 0, to: this.editor.state.doc.length, insert: newScript.raw }
