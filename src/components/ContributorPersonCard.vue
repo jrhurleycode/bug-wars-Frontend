@@ -7,7 +7,8 @@
         <div class="card-image">
           <img
             class="card-img"
-            :src="imgPath(contributor.picture)"
+            
+   :src="../assets/james_ximenez_headshot.jpg"
             alt="../assets/stock_headshot.jpg"
           />
         </div>
