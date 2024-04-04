@@ -6,6 +6,16 @@
         <h1 id="title">SCRIPT EDITOR</h1>
       </div>
 
+      <!-- <div class="card flex justify-content-center">
+        <Dropdown
+          v-model="selectedScript"
+          :options="scriptList"
+          optionLabel="name"
+          placeholder="Select a Script"
+          class="w-full md:w-14rem"
+        />
+      </div> -->
+
       <!-- Adjust box to be display:grid and map out elements inside. -->
       <div id="script-editor-div">
         <div id="script-editor-box">
@@ -53,6 +63,7 @@ import { useScriptStore } from '@/stores/ScriptStore'
 import scriptService from '@/services/ScriptService'
 import { useAuthStore } from '@/stores/auth'
 import Toast from 'primevue/toast'
+import Dropdown from 'primevue/dropdown'
 
 export default {
   components: { Toast },
@@ -66,7 +77,8 @@ export default {
         name: '',
         raw: ''
       },
-      editor: null
+      editor: null,
+      scriptList: []
     }
   },
   mounted() {
@@ -96,6 +108,11 @@ export default {
     })
   },
   methods: {
+    getUserScripts() {
+      scriptService.getUserScripts(this.user).then((response) => {
+        this.scriptList = response.data
+      })
+    },
     confirmName() {
       if (this.scriptName === '') {
         this.$toast.add({
