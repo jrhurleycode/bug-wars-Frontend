@@ -1,5 +1,6 @@
 <template>
   <!-- Needs Logo -->
+
   <Transition appear>
     <div id="script-editor-title-container">
       <div id="title-div">
@@ -19,8 +20,18 @@
       <!-- Adjust box to be display:grid and map out elements inside. -->
       <div id="script-editor-div">
         <div id="script-editor-box">
-          <div id="name-input-div">
+          <!-- <div id="name-input-div">
             <input id="name-input-field" placeholder="script-name" v-model="scriptName" />
+          </div> -->
+          <div class="card flex justify-content-center" id="name-input-div">
+            <Dropdown
+              id="name-input-field"
+              v-model="selectedScript"
+              :options="scriptList"
+              optionLabel="name"
+              placeholder="Select a Script"
+              class="w-full md:w-14rem"
+            />
           </div>
 
           <div id="script-input-box">
@@ -66,7 +77,7 @@ import Toast from 'primevue/toast'
 import Dropdown from 'primevue/dropdown'
 
 export default {
-  components: { Toast },
+  components: { Toast, Dropdown },
   data() {
     return {
       user: {},
@@ -78,13 +89,15 @@ export default {
         raw: ''
       },
       editor: null,
-      scriptList: []
+      scriptList: [],
+      selectedScript: null
     }
   },
   mounted() {
     const scriptStore = useScriptStore()
     const authStore = useAuthStore()
     this.user = authStore.user
+    this.getUserScripts()
 
     function myCompletions(context) {
       let before = context.matchBefore(/\w+/)
@@ -143,6 +156,7 @@ export default {
         .then((response) => {
           const script = response.data
           this.handleSuccessResponse(response, script)
+          this.scriptList.push(script)
         })
         .catch((error) => {
           this.handleError(error)
@@ -184,6 +198,16 @@ export default {
     },
     isSaveButtonDisabled() {
       return !this.validatedScript
+    }
+  },
+  watch: {
+    selectedScript(newScript) {
+      if (newScript) {
+        // Update the CodeMirror editor with the raw script content
+        this.editor.dispatch({
+          changes: { from: 0, to: this.editor.state.doc.length, insert: newScript.raw }
+        })
+      }
     }
   }
 }
@@ -274,10 +298,6 @@ div {
 
 button {
   cursor: pointer;
-}
-
-button:active {
-  transform: translateY(4px);
 }
 
 #confirm-button {
