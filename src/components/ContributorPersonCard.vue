@@ -8,7 +8,7 @@
           <img
             class="card-img"
             
-   :src="./assets/james_ximenez_headshot.jpg"
+   :src="src/assets/james_ximenez_headshot.jpg"
             alt="../assets/stock_headshot.jpg"
           />
         </div>
