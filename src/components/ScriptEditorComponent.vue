@@ -10,18 +10,19 @@
       <!-- Adjust box to be display:grid and map out elements inside. -->
       <div id="script-editor-div">
         <div id="script-editor-box">
-          <!-- <div id="name-input-div">
-            <input id="name-input-field" placeholder="script-name" v-model="scriptName" />
-          </div> -->
           <div class="card flex justify-content-center" id="name-input-div">
             <Dropdown
-              id="name-input-field"
+              id="name-input-field name-input-div"
               v-model="selectedScript"
-              editable
-              :options="scriptList"
+              :options="dropdownOptions"
               optionLabel="name"
               placeholder="Select a Script"
               class="w-full md:w-14rem"
+            />
+            <InputText
+              :disabled="!isNewScriptSelected"
+              v-model="scriptName"
+              placeholder="Enter script name"
             />
           </div>
 
@@ -30,7 +31,7 @@
           </div>
 
           <div id="generate-button-div">
-            <button id="generate-button" @click="updateScript">UPDATE</button>
+            <button id="generate-button" @click="confirmScript">CONFIRM</button>
           </div>
 
           <div id="save-button-div">
@@ -38,14 +39,14 @@
               id="save-button"
               :class="{ enabled: validatedScript, disabled: !validatedScript }"
               :disabled="isSaveButtonDisabled"
-              @click="saveScript"
+              @click="handleSave()"
               v-tooltip.top="tooltipText"
             >
-              SAVE
+              {{ saveButtonText }}
             </button>
           </div>
 
-          <div id="script-name-display">{{ script.name }}</div>
+          <!-- <div id="script-name-display">{{ script.name }}</div> -->
 
           <div id="output-label">OUTPUT :</div>
 
@@ -66,9 +67,10 @@ import scriptService from '@/services/ScriptService'
 import { useAuthStore } from '@/stores/auth'
 import Toast from 'primevue/toast'
 import Dropdown from 'primevue/dropdown'
+import InputText from 'primevue/inputtext'
 
 export default {
-  components: { Toast, Dropdown },
+  components: { Toast, Dropdown, InputText },
   data() {
     return {
       user: {},
@@ -118,30 +120,34 @@ export default {
       })
     },
     confirmName() {
-      if (this.script.name === '') {
-        this.$toast.add({
-          severity: 'error',
-          summary: 'No script name provided.',
-          detail: 'Please provide a name for your script.',
-          life: 3000
-        })
-      } else {
-        this.script.name = this.selectedScript.name
+      if (this.selectedScript && this.selectedScript.name === 'Create new script') {
+        if (this.scriptName === '') {
+          this.$toast.add({
+            severity: 'error',
+            summary: 'No script name provided.',
+            detail: 'Please provide a name for your script.',
+            life: 3000
+          })
+        } else {
+          this.script.name = this.scriptName // Update script name with input field value
+        }
+      } else if (this.selectedScript) {
+        this.script.name = this.selectedScript.name // Update script name with selected script's name
       }
     },
+
     updateRawScript() {
       // Get the document content
       const docContent = this.editor.state.doc.toString()
       // Update script.rawScript with the document content
       this.script.raw = docContent
-      console.log('Raw Script: ' + this.script.raw)
     },
-    updateScript() {
+    confirmScript() {
       this.confirmName()
       this.updateRawScript()
       this.validatedScript = true
     },
-    saveScript() {
+    createScript() {
       scriptService
         .createScript(this.user, this.script)
         .then((response) => {
@@ -152,7 +158,22 @@ export default {
         .catch((error) => {
           this.handleError(error)
         })
+      this.scriptName = ''
       this.validatedScript = false
+    },
+    updateScript() {
+      if (this.selectedScript.id) {
+        scriptService
+          .updateScript(this.selectedScript, this.user)
+          .then((response) => {
+            const script = response.data
+            this.handleSuccessResponse(response, script)
+            this.scriptList.splice(this.scriptList.indexOf(this.selectedScript), 1, script)
+          })
+          .catch((error) => {
+            this.handleError(error)
+          })
+      }
     },
     handleSuccessResponse(response, script) {
       if (response.status === 409) {
@@ -181,6 +202,18 @@ export default {
         }
       }
       this.bytecode = errorMessage
+    },
+    handleDropdownChange() {
+      if (this.selectedScript && this.selectedScript.name === 'Create new script') {
+        this.script.name = '' // Clear the script name input field
+      }
+    },
+    handleSave() {
+      if (this.selectedScript.name === 'Create new script' && this.scriptName.trim() !== '') {
+        this.createScript()
+      } else {
+        this.updateScript()
+      }
     }
   },
   computed: {
@@ -189,6 +222,20 @@ export default {
     },
     isSaveButtonDisabled() {
       return !this.validatedScript
+    },
+    isNewScriptSelected() {
+      return this.selectedScript && this.selectedScript.name === 'Create new script'
+    },
+    dropdownOptions() {
+      // Add a placeholder option for creating a new script
+      return [{ name: 'Create new script' }, ...this.scriptList]
+    },
+    saveButtonText() {
+      if (this.selectedScript && this.selectedScript.name === 'Create new script') {
+        return 'CREATE'
+      } else {
+        return 'UPDATE'
+      }
     }
   },
   watch: {
@@ -247,7 +294,7 @@ div {
 }
 
 #script-editor-box {
-  width: 450px;
+  width: 550px;
   height: 650px;
   background: #0a111c;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
@@ -275,8 +322,8 @@ div {
   border: solid #53b290 1px;
   text-align: center;
   border-radius: 5px;
-  width: 130px;
-  height: 30px;
+  width: 300px;
+  height: 40px;
   margin-bottom: 5px;
   font-family: Orbitron;
   background-color: #0a111c;
@@ -310,7 +357,6 @@ button {
   border: none;
   flex-direction: column;
   margin-top: 5px;
-  border-left: solid #53b290 3px;
   height: 95%;
   padding-left: 5px;
 }
