@@ -26,8 +26,8 @@ export default {
       }
     })
   },
-  createScript(user, script) {
-    return api.post(`/api/scripts`, script, {
+  createScript(user, scriptRequest) {
+    return api.post(`/api/scripts`, scriptRequest, {
       headers: {
         Authorization: `Bearer ${user.accessToken}`
       },
@@ -36,13 +36,10 @@ export default {
       }
     })
   },
-  updateScript(script, user) {
-    return api.put(`/api/scripts/${script.id}`, script, {
+  updateScript(id, scriptRequest, user) {
+    return api.put(`/api/scripts/${id}`, scriptRequest, {
       headers: {
         Authorization: `Bearer ${user.accessToken}`
-      },
-      params: {
-        userId: user.id
       }
     })
   },

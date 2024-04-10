@@ -164,11 +164,12 @@ export default {
     updateScript() {
       if (this.selectedScript.id) {
         scriptService
-          .updateScript(this.selectedScript, this.user)
+          .updateScript(this.selectedScript.id, this.script, this.user)
           .then((response) => {
-            const script = response.data
-            this.handleSuccessResponse(response, script)
-            this.scriptList.splice(this.scriptList.indexOf(this.selectedScript), 1, script)
+            const scriptResponse = response.data
+            console.log('response: ' + scriptResponse)
+            this.handleSuccessResponse(response, scriptResponse)
+            this.scriptList.splice(this.scriptList.indexOf(this.selectedScript), 1, scriptResponse)
           })
           .catch((error) => {
             this.handleError(error)
@@ -185,6 +186,14 @@ export default {
           severity: 'success',
           summary: 'Script created',
           detail: 'Script created.',
+          life: 3000
+        })
+      } else if (response.status === 200) {
+        this.bytecode = script.bytecode
+        this.$toast.add({
+          severity: 'success',
+          summary: 'Script updated',
+          detail: 'Script updated.',
           life: 3000
         })
       } else {
