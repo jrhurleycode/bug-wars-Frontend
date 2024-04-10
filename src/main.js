@@ -12,6 +12,7 @@ import ToastService from 'primevue/toastservice'
 import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
 import Tooltip from 'primevue/tooltip'
+import ConfirmationService from 'primevue/confirmationservice'
 import 'primevue/resources/themes/lara-dark-blue/theme.css'
 
 axios.defaults.baseURL = import.meta.env.VITE_REMOTE_API
@@ -26,6 +27,7 @@ app.component('AccordionTab', AccordionTab)
 app.use(createPinia())
 app.use(router)
 app.use(ToastService)
+app.use(ConfirmationService)
 app.use(PrimeVue)
 app.directive('tooltip', Tooltip)
 

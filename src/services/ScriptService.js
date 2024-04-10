@@ -47,9 +47,6 @@ export default {
     return api.delete(`/api/scripts/${id}`, {
       headers: {
         Authorization: `Bearer ${user.accessToken}`
-      },
-      params: {
-        userId: user.id
       }
     })
   }

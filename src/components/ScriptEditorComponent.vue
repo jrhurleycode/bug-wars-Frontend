@@ -12,7 +12,7 @@
         <div id="script-editor-box">
           <div class="card flex justify-content-center" id="name-input-div">
             <Dropdown
-              id="name-input-field name-input-div"
+              id="name-input-field"
               v-model="selectedScript"
               :options="dropdownOptions"
               optionLabel="name"
@@ -21,6 +21,7 @@
             />
             <InputText
               :disabled="!isNewScriptSelected"
+              id="input-script-name"
               v-model="scriptName"
               placeholder="Enter script name"
             />
@@ -30,20 +31,25 @@
             <div ref="editor" id="script-input"></div>
           </div>
 
+          <Toast />
+
           <div id="generate-button-div">
             <button id="generate-button" @click="confirmScript">CONFIRM</button>
           </div>
 
+          <ConfirmPopup />
           <div id="save-button-div">
             <button
               id="save-button"
               :class="{ enabled: validatedScript, disabled: !validatedScript }"
               :disabled="isSaveButtonDisabled"
-              @click="handleSave()"
+              @click="handleSave($event)"
               v-tooltip.top="tooltipText"
             >
               {{ saveButtonText }}
             </button>
+
+            <button id="delete-button" @click="deleteScript($event)">DELETE</button>
           </div>
 
           <!-- <div id="script-name-display">{{ script.name }}</div> -->
@@ -52,7 +58,6 @@
 
           <div id="output-box">{{ bytecode }}</div>
         </div>
-        <Toast />
       </div>
     </div>
   </Transition>
@@ -68,9 +73,10 @@ import { useAuthStore } from '@/stores/auth'
 import Toast from 'primevue/toast'
 import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
+import ConfirmPopup from 'primevue/confirmpopup'
 
 export default {
-  components: { Toast, Dropdown, InputText },
+  components: { Toast, Dropdown, InputText, ConfirmPopup },
   data() {
     return {
       user: {},
@@ -83,7 +89,7 @@ export default {
       },
       editor: null,
       scriptList: [],
-      selectedScript: null
+      selectedScript: ''
     }
   },
   mounted() {
@@ -137,9 +143,7 @@ export default {
     },
 
     updateRawScript() {
-      // Get the document content
       const docContent = this.editor.state.doc.toString()
-      // Update script.rawScript with the document content
       this.script.raw = docContent
     },
     confirmScript() {
@@ -147,40 +151,131 @@ export default {
       this.updateRawScript()
       this.validatedScript = true
     },
-    createScript() {
-      scriptService
-        .createScript(this.user, this.script)
-        .then((response) => {
-          const script = response.data
-          this.handleSuccessResponse(response, script)
-          this.scriptList.push(script)
-        })
-        .catch((error) => {
-          this.handleError(error)
-        })
-      this.scriptName = ''
-      this.validatedScript = false
+    createScript(event) {
+      this.$confirm.require({
+        target: event.currentTarget,
+        message: 'Are you sure you want to create this script?',
+        icon: 'pi pi-exclamation-triangle',
+        rejectClass: 'p-button-secondary p-button-outlined p-button-sm',
+        acceptClass: 'p-button-sm',
+        rejectLabel: 'Cancel',
+        acceptLabel: 'Create',
+        accept: () => {
+          if (this.selectedScript !== null) {
+            scriptService
+              .createScript(this.user, this.script)
+              .then((response) => {
+                const script = response.data
+                this.handleSuccessResponse(response, script)
+                this.getUserScripts()
+              })
+              .catch((error) => {
+                this.handleError(error)
+              })
+            this.scriptName = ''
+            this.validatedScript = false
+          } else {
+            this.$toast.add({
+              severity: 'error',
+              summary: 'No script found',
+              detail: 'Please create or select a script.',
+              life: 3000
+            })
+          }
+        },
+        reject: () => {
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Rejected',
+            detail: 'You have rejected',
+            life: 3000
+          })
+        }
+      })
     },
-    updateScript() {
-      if (this.selectedScript.id) {
-        scriptService
-          .updateScript(this.selectedScript.id, this.script, this.user)
-          .then((response) => {
-            const scriptResponse = response.data
-            console.log('response: ' + scriptResponse)
-            this.handleSuccessResponse(response, scriptResponse)
-            this.scriptList.splice(this.scriptList.indexOf(this.selectedScript), 1, scriptResponse)
+    updateScript(event) {
+      this.$confirm.require({
+        target: event.currentTarget,
+        message: 'Are you sure you want to update this script?',
+        icon: 'pi pi-exclamation-triangle',
+        rejectClass: 'p-button-secondary p-button-outlined p-button-sm',
+        acceptClass: 'p-button-sm',
+        rejectLabel: 'Cancel',
+        acceptLabel: 'Update',
+        accept: () => {
+          if (this.selectedScript.id) {
+            this.confirmSave(event)
+            scriptService
+              .updateScript(this.selectedScript.id, this.script, this.user)
+              .then((response) => {
+                const scriptResponse = response.data
+                this.handleSuccessResponse(response, scriptResponse)
+                this.getUserScripts()
+              })
+              .catch((error) => {
+                this.handleError(error)
+              })
+          } else {
+            this.$toast.add({
+              severity: 'error',
+              summary: 'No script selected',
+              detail: 'Please select a script.',
+              life: 3000
+            })
+          }
+        },
+        reject: () => {
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Rejected',
+            detail: 'You have rejected',
+            life: 3000
           })
-          .catch((error) => {
-            this.handleError(error)
+        }
+      })
+    },
+    deleteScript(event) {
+      this.$confirm.require({
+        target: event.currentTarget,
+        message: 'Do you want to delete this script?',
+        icon: 'pi pi-info-circle',
+        rejectClass: 'p-button-secondary p-button-outlined p-button-sm',
+        acceptClass: 'p-button-danger p-button-sm',
+        rejectLabel: 'Cancel',
+        acceptLabel: 'Delete',
+        accept: () => {
+          if (this.selectedScript.id) {
+            scriptService
+              .deleteScript(this.selectedScript.id, this.user)
+              .then((response) => {
+                const scriptResponse = response.data
+                this.handleSuccessResponse(response, scriptResponse)
+                this.getUserScripts()
+              })
+              .catch((error) => {
+                this.handleError(error)
+              })
+          } else {
+            this.$toast.add({
+              severity: 'error',
+              summary: 'No script selected',
+              detail: 'Please select a script.',
+              life: 3000
+            })
+          }
+        },
+        reject: () => {
+          this.$toast.add({
+            severity: 'error',
+            summary: 'Rejected',
+            detail: 'You have rejected',
+            life: 3000
           })
-      }
+        }
+      })
     },
     handleSuccessResponse(response, script) {
-      if (response.status === 409) {
-        this.bytecode =
-          'Script name exists already. Please choose a different name for your script.'
-      } else if (response.status === 201) {
+      if (response.status === 201) {
         this.bytecode = script.bytecode
         this.$toast.add({
           severity: 'success',
@@ -196,6 +291,14 @@ export default {
           detail: 'Script updated.',
           life: 3000
         })
+      } else if (response.status === 204) {
+        this.bytecode = script.bytecode
+        this.$toast.add({
+          severity: 'error',
+          summary: 'Script deleted',
+          detail: 'Script deleted.',
+          life: 3000
+        })
       } else {
         this.handleError(response)
       }
@@ -208,6 +311,9 @@ export default {
         } else if (error.response.status === 409) {
           errorMessage =
             'Script name exists already. Please choose a different name for your script.'
+        } else if (error.response.status === 403) {
+          errorMessage =
+            'Unable to delete this script. You must be the owner of this script to delete it'
         }
       }
       this.bytecode = errorMessage
@@ -217,11 +323,11 @@ export default {
         this.script.name = '' // Clear the script name input field
       }
     },
-    handleSave() {
+    handleSave(event) {
       if (this.selectedScript.name === 'Create new script' && this.scriptName.trim() !== '') {
-        this.createScript()
+        this.createScript(event)
       } else {
-        this.updateScript()
+        this.updateScript(event)
       }
     }
   },
@@ -278,6 +384,12 @@ div {
   height: 100%;
   width: 100%;
 }
+#script-editor-title-container {
+  display: flex;
+  justify-content: space-around; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  height: 100vh; /* Make the container full height of the viewport */
+}
 #title-div {
   width: 64%;
   justify-content: flex-end;
@@ -303,7 +415,7 @@ div {
 }
 
 #script-editor-box {
-  width: 550px;
+  width: 100%;
   height: 650px;
   background: #0a111c;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
@@ -314,20 +426,22 @@ div {
   grid-template-rows: 0.5fr 1fr 8fr 1fr 1fr 8fr 0.5fr;
   grid-template-areas:
     '. . . .'
-    '. name confirm .'
-    '. script-input script-input .'
-    '. gen save .'
-    '. output-label name-display .'
-    '. script-output script-output .'
+    'name . . input'
+    'script-input script-input script-input script-input'
+    'generate . save delete'
+    'output-label . . .'
+    'script-output script-output script-output script-output'
     '. . . .';
 }
 
 #name-input-div {
-  grid-area: name;
-  align-items: flex-end;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
 }
 
 #name-input-field {
+  grid-area: name;
   border: solid #53b290 1px;
   text-align: center;
   border-radius: 5px;
@@ -336,6 +450,10 @@ div {
   margin-bottom: 5px;
   font-family: Orbitron;
   background-color: #0a111c;
+}
+
+#input-script-name {
+  grid-area: input;
 }
 
 #confirm-button-div {
@@ -388,16 +506,22 @@ button {
 }
 
 #generate-button-div {
-  grid-area: gen;
+  grid-area: generate;
 }
 
-#generate-button {
+#generate-button,
+#delete-button {
   background: #e55300;
   border: #e55300;
   font-family: Michroma;
   width: 130px;
   height: 30px;
   margin-top: 5px;
+}
+
+#delete-button {
+  margin-left: 20px;
+  grid-area: generate;
 }
 
 #save-button-div {
@@ -433,17 +557,6 @@ button {
   align-items: flex-end;
   padding-right: 10px;
   width: auto;
-}
-
-#script-name-display {
-  grid-area: name-display;
-  text-align: center;
-  color: #e55300;
-  font-size: 15px;
-  font-family: Orbitron;
-  font-weight: 400;
-  align-items: flex-end;
-  /* word-wrap: break-word; */
 }
 
 #output-box {
