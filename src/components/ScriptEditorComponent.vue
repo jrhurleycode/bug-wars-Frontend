@@ -204,7 +204,6 @@ export default {
         acceptLabel: 'Update',
         accept: () => {
           if (this.selectedScript.id) {
-            this.confirmSave(event)
             scriptService
               .updateScript(this.selectedScript.id, this.script, this.user)
               .then((response) => {
@@ -456,26 +455,8 @@ div {
   grid-area: input;
 }
 
-#confirm-button-div {
-  grid-area: confirm;
-  align-items: flex-end;
-  justify-content: end;
-}
-
 button {
   cursor: pointer;
-}
-
-#confirm-button {
-  align-content: center;
-  justify-content: center;
-  width: 130px;
-  height: 30px;
-  font-family: Michroma;
-  background: #53b290;
-  border: 1px solid #3a7e66;
-
-  margin-bottom: 5px;
 }
 
 #script-input-box {
@@ -517,11 +498,23 @@ button {
   width: 130px;
   height: 30px;
   margin-top: 5px;
+  transition: background-color 0.3s ease-in-out;
+}
+
+#generate-button:hover,
+#delete-button:hover {
+  background: #b23a00;
 }
 
 #delete-button {
+  background: #ff0000;
   margin-left: 20px;
   grid-area: generate;
+  transition: background-color 0.3s ease-in-out;
+}
+
+#delete-button:hover {
+  background: #cc0000;
 }
 
 #save-button-div {
@@ -534,6 +527,11 @@ button {
   width: 130px;
   height: 30px;
   margin-top: 5px;
+  transition: background-color 0.3s ease-in-out;
+}
+
+#save-button:hover {
+  background: #b23a00;
 }
 
 .enabled {
