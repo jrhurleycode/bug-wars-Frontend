@@ -50,14 +50,14 @@ export default {
 .menu-button {
   background: rgba(60, 131, 141, 0.75);
   border-radius: 5px;
-  border-style: solid;
   border-width: 1px;
   height: 100%;
-  width: 200px;
+  width: 300px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  /* justify-content: center; */
   align-items: center;
+  border: solid white 1px;
 
   /* border: solid red 3px; */
 }
@@ -67,7 +67,7 @@ export default {
 }
 
 .menu-button:hover {
-  border: solid white 2px;
+  
   background-color: rgb(66, 189, 193);
 }
 
@@ -75,9 +75,7 @@ export default {
   display: flex;
   justify-content: center;
   position: relative;
-  top: 40px;
 
-  /* background: white; */
   background: rgba(60, 131, 141, 0.75);
   font-family: 'Michroma', sans-serif;
 }
