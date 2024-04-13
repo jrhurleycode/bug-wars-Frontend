@@ -43,7 +43,7 @@ export default {
   //This methods turns allows you use relative path of img URL's
   methods: {
     imgPath() {
-      return new URL(this.contributor.picture, import.meta.url).href
+      return new URL(this.contributor.picture, import.meta.url)
     },
     linkedinPath() {
       return new URL(this.contributor.linkedin, import.meta.url)

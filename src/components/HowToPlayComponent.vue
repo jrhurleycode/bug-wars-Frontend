@@ -68,7 +68,7 @@
             </div>
           </AccordionTab>
 
-          <AccordionTab header="SCRIPT EDITOR">
+          <AccordionTab header="SPECIES SCRIPTS">
             <div class="species-script-container">
               <div class="title">SPECIES SCRIPTS</div>
               <div class="text">

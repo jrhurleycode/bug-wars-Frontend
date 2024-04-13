@@ -47,13 +47,13 @@ export default {
 }
 </script>
 
+
 <style >
 
 
 #logo{
   border-radius: 200px;
 }
-
 body {
   background: linear-gradient(#141e30, #243b55);
   height: 200vh;

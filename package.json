@@ -23,6 +23,7 @@
     "@vuelidate/validators": "^2.0.4",
     "axios": "^1.6.2",
     "bootstrap": "^3.4.1",
+    "codemirror": "^6.0.1",
     "jwt-decode": "^4.0.0",
     "pinia": "^2.1.7",
     "primevue": "^3.46.0",
