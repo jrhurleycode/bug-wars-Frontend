@@ -15,12 +15,10 @@ export default {
 </script>
 
 <style scoped>
-#logo {
-  display: flex;
-  justify-content: center;
-}
+
 
 #script-editor-window {
   height: 100%;
+  width: 100%;
 }
 </style>
