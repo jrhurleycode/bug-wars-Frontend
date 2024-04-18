@@ -49,7 +49,7 @@ const router = createRouter({
       name: 'script-editor',
       component: ScriptEditorView,
       meta: {
-        requiresAuth: true
+        // requiresAuth: true
       }
     },
     {

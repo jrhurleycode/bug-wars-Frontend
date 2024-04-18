@@ -1,68 +1,3 @@
-<template>
-  <!-- Needs Logo -->
-
-  <Transition appear>
-    <div id="script-editor-title-container">
-      <div id="title-div">
-        <h1 id="title">SCRIPT EDITOR</h1>
-      </div>
-
-      <!-- Adjust box to be display:grid and map out elements inside. -->
-      <div id="script-editor-div">
-        <div id="script-editor-box">
-          <div class="card flex justify-content-center" id="name-input-div">
-            <Dropdown
-              id="name-input-field"
-              v-model="selectedScript"
-              :options="dropdownOptions"
-              optionLabel="name"
-              placeholder="Select a Script"
-              class="w-full md:w-14rem"
-            />
-            <InputText
-              :disabled="!isNewScriptSelected"
-              id="input-script-name"
-              v-model="scriptName"
-              placeholder="Enter script name"
-            />
-          </div>
-
-          <div id="script-input-box">
-            <div ref="editor" id="script-input"></div>
-          </div>
-
-          <Toast />
-
-          <div id="generate-button-div">
-            <button id="generate-button" @click="confirmScript">CONFIRM</button>
-          </div>
-
-          <ConfirmPopup />
-          <div id="save-button-div">
-            <button
-              id="save-button"
-              :class="{ enabled: validatedScript, disabled: !validatedScript }"
-              :disabled="isSaveButtonDisabled"
-              @click="handleSave($event)"
-              v-tooltip.top="tooltipText"
-            >
-              {{ saveButtonText }}
-            </button>
-
-            <button id="delete-button" @click="deleteScript($event)">DELETE</button>
-          </div>
-
-          <!-- <div id="script-name-display">{{ script.name }}</div> -->
-
-          <div id="output-label">OUTPUT :</div>
-
-          <div id="output-box">{{ bytecode }}</div>
-        </div>
-      </div>
-    </div>
-  </Transition>
-</template>
-
 <script>
 import { EditorState } from '@codemirror/state'
 import { basicSetup, EditorView } from 'codemirror'
@@ -334,7 +269,7 @@ export default {
     tooltipText() {
       return this.validatedScript ? '' : 'Please press UPDATE before saving a new script.'
     },
-    isSaveButtonDisabled() {
+    isUpdateButtonDisabled() {
       return !this.validatedScript
     },
     isNewScriptSelected() {
@@ -344,7 +279,7 @@ export default {
       // Add a placeholder option for creating a new script
       return [{ name: 'Create new script' }, ...this.scriptList]
     },
-    saveButtonText() {
+    updateButtonText() {
       if (this.selectedScript && this.selectedScript.name === 'Create new script') {
         return 'CREATE'
       } else {
@@ -365,13 +300,146 @@ export default {
   }
 }
 </script>
+<template>
+  <!-- Needs Logo -->
+
+  <Transition appear>
+    <div id="script-editor-title-container">
+      <div id="title-div">
+        <h1 id="title">SCRIPT EDITOR</h1>
+      </div>
+
+      <!-- Adjust box to be display:grid and map out elements inside. -->
+
+      <div class="editor-wrapper">
+        <div id="script-editor-box">
+          <div id="dropdown-name-input">
+            <Dropdown
+              id="dropdown"
+              v-model="selectedScript"
+              :options="dropdownOptions"
+              optionLabel="name"
+              placeholder="Select a Script"
+              class="w-full md:w-14rem"
+            />
+
+            <InputText
+              :disabled="!isNewScriptSelected"
+              id="name-input"
+              v-model="scriptName"
+              placeholder="Enter script name"
+            />
+          </div>
+
+          <div id="script-input-box">
+            <div ref="editor" id="script-input"></div>
+          </div>
+
+          <Toast id="toast" />
+
+          <ConfirmPopup />
+
+          <div class="buttons-div">
+            <div id="confirm-update-div">
+              <button id="confirm-button" @click="confirmScript">CONFIRM</button>
+              <button
+                id="update-button"
+                :class="{ enabled: validatedScript, disabled: !validatedScript }"
+                :disabled="isUpdateButtonDisabled"
+                @click="handleSave($event)"
+                v-tooltip.top="tooltipText"
+              >
+                {{ updateButtonText }}
+              </button>
+            </div>
+
+            <button id="delete-button" @click="deleteScript($event)">DELETE</button>
+          </div>
+
+          <!-- <div id="script-name-display">{{ script.name }}</div> -->
+
+          <div id="output-label">OUTPUT :</div>
+
+          <div id="output-box">{{ bytecode }}</div>
+        </div>
+      </div>
+    </div>
+  </Transition>
+</template>
 
 <style scoped>
-#logo {
+#name-input{
+  border: solid #53b290 2px;
+  font-family: orbitron;
+}
+
+.buttons-div {
+  margin-top: 10px;
+}
+
+.editor-wrapper {
+  margin-right: 200px;
+}
+
+#delete-button {
+  margin-right: 10px;
+}
+
+#output-label {
+  margin-left: 10px;
+
+  color: white;
+  font-size: 16px;
+  font-family: Michroma;
+  font-weight: 400;
+  /* word-wrap: break-word; */
+  height: 30px;
+  width: 100%;
+}
+
+.editor-wrapper {
   display: flex;
-  justify-content: center;
-  width: auto;
-  height: auto;
+  justify-content: start;
+}
+
+#confirm-update-div {
+  width: 100%;
+  gap: 10px;
+  margin-left: 10px;
+}
+
+#dropdown-name-input {
+  height: 60px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  padding: 10px;
+}
+
+#script-editor-box {
+  height: 800px;
+  width: 600px;
+  display: flex;
+  flex-direction: column;
+  background-color: #0a111c;
+  border-radius: 30px;
+  box-shadow: 0 0 20px #53b290;
+}
+
+#script-input {
+  margin: 10px;
+  background: #0a111c;
+  height: 50px;
+  grid-area: script-input;
+  width: 100%;
+  border-radius: 5px;
+  font-family: Orbitron;
+  color: #53b290;
+  font-size: 15px;
+  height: 500px;
+  /* overflow-x: scroll; */
+  /* max-height: 275px; */
 }
 
 button {
@@ -383,16 +451,19 @@ div {
   height: 100%;
   width: 100%;
 }
+
 #script-editor-title-container {
-  display: flex;
-  justify-content: space-around; /* Center horizontally */
-  align-items: center; /* Center vertically */
+  margin-top: 30px;
+  width: 100%;
   height: 100vh; /* Make the container full height of the viewport */
 }
+
 #title-div {
-  width: 64%;
-  justify-content: flex-end;
-  /* border: solid red 1px; */
+  display: flex;
+  justify-content: end;
+  margin: 0px;
+  padding: 0;
+  width: 75%;
 }
 
 #title {
@@ -413,103 +484,39 @@ div {
   translate: 270px 200px;
 }
 
-#script-editor-box {
-  width: 100%;
-  height: 650px;
-  background: #0a111c;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  border-radius: 15px;
-  box-shadow: 0 0 8px #53b290;
-  display: grid;
-  grid-template-columns: 0.5fr 3fr 8fr 0.5fr;
-  grid-template-rows: 0.5fr 1fr 8fr 1fr 1fr 8fr 0.5fr;
-  grid-template-areas:
-    '. . . .'
-    'name . . input'
-    'script-input script-input script-input script-input'
-    'generate . save delete'
-    'output-label . . .'
-    'script-output script-output script-output script-output'
-    '. . . .';
-}
-
-#name-input-div {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-}
-
-#name-input-field {
-  grid-area: name;
-  border: solid #53b290 1px;
+#dropdown {
   text-align: center;
-  border-radius: 5px;
   width: 300px;
   height: 40px;
-  margin-bottom: 5px;
   font-family: Orbitron;
   background-color: #0a111c;
-}
-
-#input-script-name {
-  grid-area: input;
 }
 
 button {
   cursor: pointer;
 }
 
-#script-input-box {
-  grid-area: script-input;
-  background: #0a111c;
-  border: none;
-  flex-direction: column;
-  margin-top: 5px;
-  height: 95%;
-  padding-left: 5px;
-}
-
-#script-input {
-  width: 100%;
-  border: none;
-  border-radius: 5px;
-  background: #f0f9f0;
-  font-family: Orbitron;
-  color: #53b290;
-  font-size: 15px;
-  overflow-x: scroll;
-  max-height: 275px;
-  min-width: 100%;
-}
-
 #script-input::placeholder {
   color: #53b290;
 }
 
-#generate-button-div {
-  grid-area: generate;
-}
-
-#generate-button,
+#confirm-button,
 #delete-button {
   background: #e55300;
   border: #e55300;
   font-family: Michroma;
   width: 130px;
   height: 30px;
-  margin-top: 5px;
   transition: background-color 0.3s ease-in-out;
 }
 
-#generate-button:hover,
+#confirm-button:hover,
 #delete-button:hover {
   background: #b23a00;
 }
 
 #delete-button {
   background: #ff0000;
-  margin-left: 20px;
-  grid-area: generate;
   transition: background-color 0.3s ease-in-out;
 }
 
@@ -517,20 +524,14 @@ button {
   background: #cc0000;
 }
 
-#save-button-div {
-  grid-area: save;
-  justify-content: end;
-}
-
-#save-button {
+#update-button {
   font-family: Michroma;
   width: 130px;
   height: 30px;
-  margin-top: 5px;
   transition: background-color 0.3s ease-in-out;
 }
 
-#save-button:hover {
+#update-button:hover {
   background: #b23a00;
 }
 
@@ -545,26 +546,18 @@ button {
 }
 
 #output-label {
-  grid-area: output-label;
-  text-align: center;
-  color: white;
-  font-size: 16px;
-  font-family: Michroma;
-  font-weight: 400;
-  /* word-wrap: break-word; */
-  align-items: flex-end;
-  padding-right: 10px;
-  width: auto;
 }
 
 #output-box {
-  grid-area: script-output;
   font-family: Orbitron;
-  margin-top: 5px;
-  color: yellow;
   background: #0a111c;
-  border-top: solid #e55300 3px;
-  font-size: 15px;
+  width: 95%;
+  margin: 10px;
+
+  justify-content: center;
+  align-content: center;
+  border-top: solid orange 3px;
+  color: yellow;
 }
 
 .v-enter-active,
