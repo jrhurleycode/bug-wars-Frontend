@@ -7,6 +7,7 @@ import GameLobbyView from '@/views/GameLobbyView.vue'
 import CreditsView from '@/views/CreditsView.vue'
 import ScriptEditorView from '@/views/ScriptEditorView.vue'
 import HowToPlayView from '@/views/HowToPlayView.vue'
+import CanvasView from '@/views/CanvasView.vue'
 import TestCarouselView from '@/views/CarouselView.vue'
 
 const router = createRouter({
@@ -61,6 +62,11 @@ const router = createRouter({
       path: '/carousel',
       name: 'carousel',
       component: TestCarouselView
+    },
+    {
+      path: '/canvas',
+      name: 'canvas',
+      component: CanvasView
     }
   ]
 })
